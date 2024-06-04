@@ -25,14 +25,10 @@ app.get("/", (req, res) => {
   res.send("Bolly-critics going good...");
 });
 
-/* // auth route
-app.use("/", require("./routes/authentication/auth"));
-// manage classes route
-app.use("/", require("./routes/manageClasses/manageClasses"));
-// manage users route
-app.use("/", require("./routes/manageUsers/manageUsers"));
-// manage payments route
-app.use("/", require("./routes/managePayments/managePayments")); */
+// user route
+app.use("/", require("./routes/userManagement"));
+// post route
+app.use("/", require("./routes/postManagement"));
 
 app.listen(port, () => {
   console.log(`Bolly-critics listening on port ${port}`);
