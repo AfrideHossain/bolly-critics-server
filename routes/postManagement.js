@@ -23,6 +23,19 @@ router.get("/posts", async (req, res) => {
   }
 });
 
+router.get("/featuredposts", async (req, res) => {
+  try {
+    const allPosts = await post_collections.find().limit(3).toArray();
+    if (allPosts.length > 0) {
+      return res.send(allPosts);
+    } else {
+      return res.send("Not found any post");
+    }
+  } catch (error) {
+    return res.status(500).send("internal server error");
+  }
+});
+
 router.post("/post", verifyJwt, async (req, res) => {
   let post = req.body;
   post.date = new Date().toDateString();
@@ -52,7 +65,7 @@ router.put("/post/:id", verifyJwt, async (req, res) => {
     }
     const updatePost = await post_collections.updateOne(
       { _id: new ObjectId(postId) },
-      { $set: postBody }
+      { $set: newPostObj }
     );
     if (updatePost.modifiedCount > 0) {
       return res.send(updatePost);
@@ -71,6 +84,18 @@ router.delete("/post/:id", verifyJwt, async (req, res) => {
       _id: new ObjectId(postId),
     });
     return res.send(deletePost);
+  } catch (error) {
+    return res.status(500).send("internal server error");
+  }
+});
+
+router.get("/post/:id", async (req, res) => {
+  let postId = req.params.id;
+  try {
+    const postDetails = await post_collections.findOne({
+      _id: new ObjectId(postId),
+    });
+    return res.send(postDetails);
   } catch (error) {
     return res.status(500).send("internal server error");
   }

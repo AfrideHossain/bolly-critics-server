@@ -53,7 +53,6 @@ router.put("/user/:id", verifyJwt, async (req, res) => {
     { _id: new ObjectId(id) },
     { $set: newUserObj }
   );
-  console.log(updateResult);
   if (updateResult.modifiedCount > 0) {
     return res
       .status(200)
@@ -63,10 +62,22 @@ router.put("/user/:id", verifyJwt, async (req, res) => {
       .status(400)
       .send({ success: false, message: "No changes detected." });
   }
-  //   if (!user) {
-  //     return res.status(404).json({ message: "User not found" });
-  //   }
-  //   return res.send(user);
+});
+
+router.get("/featuredusers", async (req, res) => {
+  try {
+    const featuredUsers = await user_collections
+      .find({}, { projection: { avatar: 1, username: 1 } })
+      .limit(3)
+      .toArray();
+    if (featuredUsers.length > 0) {
+      return res.send(featuredUsers);
+    } else {
+      return res.send("Not found any user");
+    }
+  } catch (error) {
+    return res.status(500).send("internal server error");
+  }
 });
 
 module.exports = router;
